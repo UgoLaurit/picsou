@@ -23,7 +23,7 @@ const RootLayout =({
   children: ReactNode;
 }) => {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider cookies={cookies().toString()}>
           {children}
