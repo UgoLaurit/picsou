@@ -18,7 +18,7 @@ datasource db {
 
 // Necessary for Next auth
 model Account {
-  id                String        @id @default(cuid())
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -30,8 +30,7 @@ model Account {
   scope             String?
   id_token          String? // @db.Text
   session_state     String?
-  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Transaction       Transaction[]
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -73,19 +72,20 @@ model Bank {
 }
 
 model BankAccount {
-  id      String  @id @default(cuid())
-  name    String
-  type    String
-  bank    Bank?   @relation(fields: [bankId], references: [id])
-  bankId  String?
-  owner   User?   @relation(fields: [ownerId], references: [id])
-  ownerId String?
+  id          String        @id @default(cuid())
+  name        String
+  type        String
+  bank        Bank          @relation(fields: [bankId], references: [id])
+  bankId      String
+  owner       User?         @relation(fields: [ownerId], references: [id])
+  ownerId     String?
+  Transaction Transaction[]
 }
 
 model Transaction {
   id            String                  @id @default(cuid())
-  account       Account                 @relation(fields: [accountId], references: [id])
-  accountId     String
+  bankAccount   BankAccount             @relation(fields: [bankAccountId], references: [id])
+  bankAccountId String
   date          DateTime
   label         String
   value         Decimal
@@ -97,12 +97,14 @@ model TransactionCategory {
   id                     String                   @id @default(cuid())
   name                   String
   color                  String
+  order                  Int
   transactionSubcategory TransactionSubcategory[]
 }
 
 model TransactionSubcategory {
   id               String               @id @default(cuid())
   name             String
+  order            Int
   category         TransactionCategory? @relation(fields: [categoryId], references: [id])
   categoryId       String?
   transactions     Transaction[]
