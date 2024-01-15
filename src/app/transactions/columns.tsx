@@ -6,6 +6,7 @@ import { FormattedValue } from "~/app/_components/format/formatted-value";
 import { FormattedCategory } from "~/app/_components/format/formatted-category";
 import { MdOutlineClose } from "react-icons/md";
 import { deleteTransaction } from "~/actions/transactions";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -62,7 +63,12 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "",
     cell: ({ row }) => {
       const handleDelete = async () => {
-        await deleteTransaction(row.original.id);
+        const response = await deleteTransaction(row.original.id);
+        if (response.id) {
+          toast("Transaction supprimée");
+        } else {
+          toast("Une erreur est survenue");
+        }
       };
 
       return (

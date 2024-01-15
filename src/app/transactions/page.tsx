@@ -2,6 +2,7 @@ import { columns } from "./columns";
 import { DataTable } from "~/app/_components/table/data-table";
 import ImportTransactions from "~/app/transactions/import-transactions";
 import { getAllTransactions } from "~/actions/transactions";
+import { Toaster } from "~/app/_components/ui/sonner";
 
 const TransactionsPage = async () => {
   const allTransactions = await getAllTransactions();
@@ -13,6 +14,8 @@ const TransactionsPage = async () => {
       </div>
 
       <DataTable columns={columns} data={allTransactions} />
+
+      <Toaster />
     </div>
   );
 };

@@ -16,7 +16,6 @@ import { IoCloudUpload } from "react-icons/io5";
 import { parseCSV } from "~/lib/csv";
 import { type TransactionDTO } from "~/types/transaction.dto";
 import { addTransactions } from "~/actions/transactions";
-import { Toaster } from "~/app/_components/ui/sonner";
 import { toast } from "sonner";
 
 const ImportTransactions = () => {
@@ -58,8 +57,6 @@ const ImportTransactions = () => {
           <IoCloudUpload className="mt-0.5" size={16} /> Importer
         </Button>
       </DialogTrigger>
-
-      <Toaster />
 
       <DialogContent>
         <DialogHeader>
