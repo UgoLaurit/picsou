@@ -14,7 +14,7 @@ import { Input } from "~/app/_components/ui/input";
 import { type ChangeEvent, useState } from "react";
 import { IoCloudUpload } from "react-icons/io5";
 import { parseCSV } from "~/lib/csv";
-import { type TransactionDTO } from "~/types/transaction.dto";
+import { type TransactionDTO } from "~/types/transaction";
 import { addTransactions } from "~/actions/transactions";
 import { toast } from "sonner";
 

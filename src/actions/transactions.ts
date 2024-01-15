@@ -1,8 +1,7 @@
 "use server";
 
-import { type TransactionDTO } from "~/types/transaction.dto";
+import { type Transaction, type TransactionDTO } from "~/types/transaction";
 import { db } from "~/server/db";
-import { type Transaction } from "~/types/transaction";
 import { revalidatePath } from "next/cache";
 
 export const getAllTransactions = async (): Promise<Transaction[]> => {

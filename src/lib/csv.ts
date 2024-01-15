@@ -1,4 +1,4 @@
-import { type TransactionDTO } from "~/types/transaction.dto";
+import { type TransactionDTO } from "~/types/transaction";
 import { getAllSubcategories } from "~/actions/category";
 
 export const parseCSV = async (
