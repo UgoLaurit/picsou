@@ -1,6 +1,6 @@
 import { columns } from "./columns";
 import { DataTable } from "~/app/_components/table/data-table";
-import ImportTransactions from "~/app/transactions/import-transactions/import-transactions";
+import ImportTransactions from "~/app/transactions/import-transactions";
 import { getAllTransactions } from "~/actions/transactions";
 
 const TransactionsPage = async () => {
