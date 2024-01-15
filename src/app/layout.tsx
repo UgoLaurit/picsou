@@ -1,10 +1,6 @@
 import "~/styles/globals.css";
 
-import { cookies } from "next/headers";
-
-import { TRPCReactProvider } from "~/trpc/react";
 import { type ReactNode } from "react";
-
 
 export const metadata = {
   title: "Picsou",
@@ -12,20 +8,14 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const RootLayout =({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="fr">
-      <body>
-        <TRPCReactProvider cookies={cookies().toString()}>
-          {children}
-        </TRPCReactProvider>
+      <body className="bg-polar-night-100 text-snow-storm-200 px-8 py-6">
+        {children}
       </body>
     </html>
   );
-}
+};
 
-export default RootLayout
+export default RootLayout;

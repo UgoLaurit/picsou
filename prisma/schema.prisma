@@ -83,14 +83,14 @@ model BankAccount {
 }
 
 model Transaction {
-  id            String                  @id @default(cuid())
-  bankAccount   BankAccount             @relation(fields: [bankAccountId], references: [id])
+  id            String                 @id @default(cuid())
+  bankAccount   BankAccount            @relation(fields: [bankAccountId], references: [id])
   bankAccountId String
   date          DateTime
   label         String
-  value         Decimal
-  subcategory   TransactionSubcategory? @relation(fields: [subcategoryId], references: [id])
-  subcategoryId String?
+  value         Float
+  subcategory   TransactionSubcategory @relation(fields: [subcategoryId], references: [id])
+  subcategoryId String
 }
 
 model TransactionCategory {
@@ -102,11 +102,11 @@ model TransactionCategory {
 }
 
 model TransactionSubcategory {
-  id               String               @id @default(cuid())
+  id               String              @id @default(cuid())
   name             String
   order            Int
-  category         TransactionCategory? @relation(fields: [categoryId], references: [id])
-  categoryId       String?
+  category         TransactionCategory @relation(fields: [categoryId], references: [id])
+  categoryId       String
   transactions     Transaction[]
   importCategories String[]
 }
