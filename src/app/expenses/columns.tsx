@@ -4,20 +4,8 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { type Transaction } from "~/types/transaction";
 import { FormattedValue } from "~/app/_components/format/formatted-value";
 import { FormattedCategory } from "~/app/_components/format/formatted-category";
-import { MdOutlineClose } from "react-icons/md";
-import { deleteTransaction } from "~/actions/transactions";
-import { toast } from "sonner";
 
 export const columns: ColumnDef<Transaction>[] = [
-  {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row }) => {
-      const date = row.original.date;
-      return date.toLocaleDateString("fr-FR");
-    },
-  },
-
   {
     accessorKey: "subcategory",
     header: "Catégorie",
@@ -46,29 +34,6 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       const value = row.original.value;
       return <FormattedValue value={value} />;
-    },
-  },
-
-  {
-    accessorKey: "id",
-    header: "",
-    cell: ({ row }) => {
-      const handleDelete = async () => {
-        const response = await deleteTransaction(row.original.id);
-        if (response.id) {
-          toast("Transaction supprimée");
-        } else {
-          toast("Une erreur est survenue");
-        }
-      };
-
-      return (
-        <div className="flex flex-row justify-end">
-          <button onClick={handleDelete}>
-            <MdOutlineClose className="mt-1" size={20} />
-          </button>
-        </div>
-      );
     },
   },
 ];

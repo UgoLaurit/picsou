@@ -61,9 +61,6 @@ const ImportTransactions = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Importer des transactions</DialogTitle>
-          {/*<DialogDescription>*/}
-          {/*  Make changes to your profile here. Click save when you're done.*/}
-          {/*</DialogDescription>*/}
         </DialogHeader>
 
         <div className="my-8 flex flex-col items-center justify-center gap-4 p-4">

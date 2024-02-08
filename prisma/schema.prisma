@@ -72,14 +72,15 @@ model Bank {
 }
 
 model BankAccount {
-  id          String        @id @default(cuid())
-  name        String
-  type        String
-  bank        Bank          @relation(fields: [bankId], references: [id])
-  bankId      String
-  owner       User?         @relation(fields: [ownerId], references: [id])
-  ownerId     String?
-  Transaction Transaction[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  type                 String
+  bank                 Bank                   @relation(fields: [bankId], references: [id])
+  bankId               String
+  owner                User?                  @relation(fields: [ownerId], references: [id])
+  ownerId              String?
+  transaction          Transaction[]
+  scheduledTransaction ScheduledTransaction[]
 }
 
 model Transaction {
@@ -102,11 +103,27 @@ model TransactionCategory {
 }
 
 model TransactionSubcategory {
-  id               String              @id @default(cuid())
-  name             String
-  order            Int
-  category         TransactionCategory @relation(fields: [categoryId], references: [id])
-  categoryId       String
-  transactions     Transaction[]
-  importCategories String[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  order                Int
+  category             TransactionCategory    @relation(fields: [categoryId], references: [id])
+  categoryId           String
+  transactions         Transaction[]
+  scheduledTransaction ScheduledTransaction[]
+  importCategories     String[]
+}
+
+model ScheduledTransaction {
+  id            String                 @id @default(cuid())
+  bankAccount   BankAccount            @relation(fields: [bankAccountId], references: [id])
+  bankAccountId String
+  date          DateTime
+  label         String
+  value         Float
+  subcategory   TransactionSubcategory @relation(fields: [subcategoryId], references: [id])
+  subcategoryId String
+  frequency     String
+  firstDate     DateTime
+  lastDate      DateTime
+  active        Boolean
 }

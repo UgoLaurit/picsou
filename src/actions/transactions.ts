@@ -4,8 +4,20 @@ import { type Transaction, type TransactionDTO } from "~/types/transaction";
 import { db } from "~/server/db";
 import { revalidatePath } from "next/cache";
 
-export const getAllTransactions = async (): Promise<Transaction[]> => {
+export const getTransactionsByMonth = async ({
+  month,
+  year,
+}: {
+  month: number;
+  year: number;
+}): Promise<Transaction[]> => {
   return db.transaction.findMany({
+    where: {
+      date: {
+        gte: new Date(year, month, 1),
+        lte: new Date(year, month + 1, 0),
+      },
+    },
     include: {
       bankAccount: {
         include: {
