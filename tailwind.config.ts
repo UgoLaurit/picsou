@@ -37,6 +37,9 @@ const config = {
           500: "#b48ead", // Nord 15 - Aurora 5
         },
       },
+      spacing: {
+        "body-screen": "calc(100vh - 8.75rem)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

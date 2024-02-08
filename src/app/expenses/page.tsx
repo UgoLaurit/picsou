@@ -1,6 +1,7 @@
-import { DataTable } from "~/app/_components/table/data-table";
-import { columns } from "~/app/expenses/columns";
 import { getTransactionsByMonth } from "~/actions/transactions";
+import ExpensesChart from "~/app/_components/charts/expenses-chart";
+import { getExpensesChartData, getIncomesChartData } from "~/lib/transactions";
+import { getAllSubcategories } from "~/actions/category";
 
 const ExpensesPage = async ({
   searchParams,
@@ -10,9 +11,16 @@ const ExpensesPage = async ({
   const month = Number(searchParams?.month) || new Date().getMonth();
   const year = Number(searchParams?.year) || new Date().getFullYear();
 
+  const subcategories = await getAllSubcategories();
   const transactions = await getTransactionsByMonth({ month, year });
 
-  return <DataTable columns={columns} data={transactions} />;
+  return (
+    <div className="h-body-screen flex w-full flex-row gap-40 px-12">
+      <ExpensesChart data={getIncomesChartData(transactions, subcategories)} />
+
+      <ExpensesChart data={getExpensesChartData(transactions, subcategories)} />
+    </div>
+  );
 };
 
 export default ExpensesPage;
