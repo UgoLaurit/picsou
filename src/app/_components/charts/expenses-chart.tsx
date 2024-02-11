@@ -1,7 +1,7 @@
 "use client";
 
 import { ComputedDatum, ResponsiveSunburst } from "@nivo/sunburst";
-import { ChartData } from "~/types/chart-data";
+import { ExpensesChartData } from "~/types/expenses-chart-data";
 import { useTheme } from "@nivo/core";
 
 const CustomTooltipComponent = ({
@@ -18,7 +18,7 @@ const CustomTooltipComponent = ({
   );
 };
 
-const ExpensesChart = ({ data }: { data: ChartData }) => {
+const ExpensesChart = ({ data }: { data: ExpensesChartData }) => {
   const colors: string[] = [];
   data.children.forEach((child) => {
     colors.push(child.color!);

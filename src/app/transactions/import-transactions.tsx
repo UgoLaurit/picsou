@@ -15,7 +15,7 @@ import { type ChangeEvent, useState } from "react";
 import { IoCloudUpload } from "react-icons/io5";
 import { parseCSV } from "~/lib/csv";
 import { type TransactionDTO } from "~/types/transaction";
-import { addTransactions } from "~/actions/transactions";
+import { addTransactions } from "~/actions/transaction";
 import { toast } from "sonner";
 
 const ImportTransactions = () => {

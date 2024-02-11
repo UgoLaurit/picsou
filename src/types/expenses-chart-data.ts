@@ -5,7 +5,7 @@ export type Node = {
   children?: Node[];
 };
 
-export type ChartData = {
+export type ExpensesChartData = {
   name: string;
   children: Node[];
 };

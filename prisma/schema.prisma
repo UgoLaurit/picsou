@@ -81,6 +81,7 @@ model BankAccount {
   ownerId              String?
   transaction          Transaction[]
   scheduledTransaction ScheduledTransaction[]
+  balance              Balance[]
 }
 
 model Transaction {
@@ -126,4 +127,12 @@ model ScheduledTransaction {
   firstDate     DateTime
   lastDate      DateTime
   active        Boolean
+}
+
+model Balance {
+  id            String      @id @default(cuid())
+  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id])
+  bankAccountId String
+  date          DateTime
+  value         Float
 }

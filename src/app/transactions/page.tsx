@@ -2,7 +2,7 @@ import { columns } from "./columns";
 import { DataTable } from "~/app/_components/table/data-table";
 import ImportTransactions from "~/app/transactions/import-transactions";
 import { Toaster } from "~/app/_components/ui/sonner";
-import { getTransactionsByMonth } from "~/actions/transactions";
+import { getTransactionsByMonth } from "~/actions/transaction";
 
 const TransactionsPage = async ({
   searchParams,

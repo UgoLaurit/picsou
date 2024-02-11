@@ -34,7 +34,7 @@ const DateSelect = ({
           className="text-xl capitalize outline-none"
           onClick={goToPresent}
         >
-          {byYear ? `${year}` : `${MONTHS[month]} ${year}`}
+          {byYear ? `${year}` : `${MONTHS[month - 1]} ${year}`}
         </button>
 
         <button className="outline-none" onClick={next}>

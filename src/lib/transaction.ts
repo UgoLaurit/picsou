@@ -1,4 +1,4 @@
-import { type ChartData, type Node } from "~/types/chart-data";
+import { type ExpensesChartData, type Node } from "~/types/expenses-chart-data";
 import { type Transaction } from "~/types/transaction";
 import { type Subcategory } from "~/types/subcategory";
 
@@ -10,7 +10,7 @@ export const getIncomesChartData = (
     (transaction) => transaction.value > 0,
   );
 
-  return formatChartData(incomesTransactions, subcategories);
+  return formatExpensesChartData(incomesTransactions, subcategories);
 };
 
 export const getExpensesChartData = (
@@ -21,14 +21,14 @@ export const getExpensesChartData = (
     (transaction) => transaction.value < 0,
   );
 
-  return formatChartData(expensesTransactions, subcategories);
+  return formatExpensesChartData(expensesTransactions, subcategories);
 };
 
-const formatChartData = (
+const formatExpensesChartData = (
   transactions: Transaction[],
   subcategories: Subcategory[],
-): ChartData => {
-  const chartData: ChartData = {
+): ExpensesChartData => {
+  const chartData: ExpensesChartData = {
     name: "Transactions",
     children: [],
   };
@@ -84,4 +84,34 @@ const formatChartData = (
   });
 
   return chartData;
+};
+
+export const getBalanceOfTheYearByDay = (
+  transactions: Transaction[],
+  year: number,
+): { value: number; date: string }[] => {
+  const balanceByDay: { value: number; date: string }[] = new Array(366).fill(
+    0,
+  );
+
+  balanceByDay.forEach((_, index) => {
+    const date = new Date(year, 0, index + 1);
+    const transactionsOfTheDay = getTransactionsOfTheDay(transactions, date);
+    balanceByDay[index] = transactionsOfTheDay.reduce(
+      (balance, transaction) => balance + transaction.value,
+      0,
+    );
+  });
+
+  return balanceByDay;
+};
+
+const getTransactionsOfTheDay = (
+  transactions: Transaction[],
+  date: Date,
+): Transaction[] => {
+  return transactions.filter(
+    (transaction) =>
+      new Date(transaction.date).toDateString() === date.toDateString(),
+  );
 };

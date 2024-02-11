@@ -1,6 +1,6 @@
-import { getTransactionsByMonth } from "~/actions/transactions";
+import { getTransactionsByMonth } from "~/actions/transaction";
 import ExpensesChart from "~/app/_components/charts/expenses-chart";
-import { getExpensesChartData, getIncomesChartData } from "~/lib/transactions";
+import { getExpensesChartData, getIncomesChartData } from "~/lib/transaction";
 import { getAllSubcategories } from "~/actions/category";
 
 const ExpensesPage = async ({
@@ -15,7 +15,7 @@ const ExpensesPage = async ({
   const transactions = await getTransactionsByMonth({ month, year });
 
   return (
-    <div className="h-body-screen flex w-full flex-row gap-40 px-12">
+    <div className="flex h-body-screen w-full flex-row gap-40 px-12">
       <ExpensesChart data={getIncomesChartData(transactions, subcategories)} />
 
       <ExpensesChart data={getExpensesChartData(transactions, subcategories)} />

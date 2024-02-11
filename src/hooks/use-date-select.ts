@@ -8,7 +8,7 @@ export const useDateSelect = (
   min?: { month: number; year: number },
   max?: { month: number; year: number },
 ): [number, number, () => void, () => void, () => void] => {
-  const [month, setMonth] = useState(new Date().getMonth());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
 
   const searchParams = useSearchParams();
@@ -48,9 +48,9 @@ export const useDateSelect = (
         setYear(year - 1);
       }
     } else {
-      if (month === 0) {
+      if (month === 1) {
         if (year > 2015) {
-          setMonth(11);
+          setMonth(12);
           setYear(year - 1);
         }
       } else if (
@@ -69,8 +69,8 @@ export const useDateSelect = (
       setMonth(0);
       setYear(year + 1);
     } else {
-      if (max ? month === 11 && year < max?.year : month === 11) {
-        setMonth(0);
+      if (max ? month === 12 && year < max?.year : month === 12) {
+        setMonth(1);
         setYear(year + 1);
       } else if (
         max

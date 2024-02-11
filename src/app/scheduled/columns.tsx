@@ -4,7 +4,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { FormattedValue } from "~/app/_components/format/formatted-value";
 import { FormattedCategory } from "~/app/_components/format/formatted-category";
 import { MdOutlineClose } from "react-icons/md";
-import { deleteTransaction } from "~/actions/transactions";
+import { deleteTransaction } from "~/actions/transaction";
 import { toast } from "sonner";
 import { type ScheduledTransaction } from "~/types/scheduled-transaction";
 import { FREQUENCIES } from "~/assets/constants";
