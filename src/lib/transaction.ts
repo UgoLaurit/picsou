@@ -34,7 +34,7 @@ const formatExpensesChartData = (
   };
 
   // Group transactions by category and subcategory
-  const categoryMap: Map<string, Node> = new Map();
+  const categoryMap = new Map<string, Node>();
 
   transactions.forEach((transaction) => {
     const { subcategory, value } = transaction;
@@ -45,7 +45,6 @@ const formatExpensesChartData = (
     if (subcategoryInfo) {
       const { category } = subcategoryInfo;
       const categoryId = category.id;
-      const subcategoryId = subcategory.id;
 
       if (!categoryMap.has(categoryId)) {
         // Create a new category node
@@ -73,7 +72,7 @@ const formatExpensesChartData = (
         }
 
         // Increment the value of the subcategory node
-        subcategoryNode.value = (subcategoryNode.value || 0) + value;
+        subcategoryNode.value = (subcategoryNode.value ?? 0) + value;
       }
     }
   });
@@ -84,34 +83,4 @@ const formatExpensesChartData = (
   });
 
   return chartData;
-};
-
-export const getBalanceOfTheYearByDay = (
-  transactions: Transaction[],
-  year: number,
-): { value: number; date: string }[] => {
-  const balanceByDay: { value: number; date: string }[] = new Array(366).fill(
-    0,
-  );
-
-  balanceByDay.forEach((_, index) => {
-    const date = new Date(year, 0, index + 1);
-    const transactionsOfTheDay = getTransactionsOfTheDay(transactions, date);
-    balanceByDay[index] = transactionsOfTheDay.reduce(
-      (balance, transaction) => balance + transaction.value,
-      0,
-    );
-  });
-
-  return balanceByDay;
-};
-
-const getTransactionsOfTheDay = (
-  transactions: Transaction[],
-  date: Date,
-): Transaction[] => {
-  return transactions.filter(
-    (transaction) =>
-      new Date(transaction.date).toDateString() === date.toDateString(),
-  );
 };

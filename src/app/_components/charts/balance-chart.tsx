@@ -39,6 +39,8 @@ const BalanceChart = ({ data }: { data: BalanceChartData }) => (
     }}
     colors="#5e81ac"
     xFormat="time:%d/%m/%Y"
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     yFormat={(value) => <FormattedValue value={parseFloat(value.toString())} />}
     curve="monotoneX"
     lineWidth={3}
@@ -50,7 +52,7 @@ const BalanceChart = ({ data }: { data: BalanceChartData }) => (
       tickRotation: 0,
       legendOffset: 36,
       legendPosition: "middle",
-      format: (value) => value.getDate(),
+      format: (value) => (value as Date).getDate(),
     }}
     axisLeft={{
       tickSize: 5,

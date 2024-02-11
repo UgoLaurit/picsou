@@ -10,30 +10,32 @@ import {
 export const getAllScheduledTransactions = async (): Promise<
   ScheduledTransaction[]
 > => {
-  return db.scheduledTransaction.findMany({
-    include: {
-      bankAccount: {
-        include: {
-          bank: true,
-        },
-      },
-      subcategory: {
-        include: {
-          category: true,
-        },
-      },
-    },
-  });
+  // return db.scheduledTransaction.findMany({
+  //   include: {
+  //     bankAccount: {
+  //       include: {
+  //         bank: true,
+  //       },
+  //     },
+  //     subcategory: {
+  //       include: {
+  //         category: true,
+  //       },
+  //     },
+  //   },
+  // });
+  return [];
 };
 
 export const addScheduledTransactions = async (
   transactions: ScheduledTransactionDTO[],
 ) => {
-  const response = await db.scheduledTransaction.createMany({
-    data: transactions,
-  });
-  revalidatePath("/transactions");
-  return response;
+  // const response = await db.scheduledTransaction.createMany({
+  //   data: transactions,
+  // });
+  // revalidatePath("/transactions");
+  // return response;
+  return [];
 };
 
 export const deleteScheduledTransaction = async (id: string) => {

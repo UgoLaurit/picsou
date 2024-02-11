@@ -1,14 +1,15 @@
-import Wallet from "~/app/wallet/wallet";
-import { getAllBankAccounts } from "~/actions/account";
+// import Wallet from "~/app/wallet/wallet";
+// import { getAllBankAccounts } from "~/actions/account";
 
 const WalletPage = async () => {
-  const bankAccounts = await getAllBankAccounts();
+  // const bankAccounts = await getAllBankAccounts();
 
   return (
     <>
-      {bankAccounts.map((account) => (
-        <Wallet key={account.id} accountId={account.id} />
-      ))}
+      <h1>Wallet page</h1>
+      {/*{bankAccounts.map((account) => (*/}
+      {/*  <Wallet key={account.id} accountId={account.id} />*/}
+      {/*))}*/}
     </>
   );
 };

@@ -1,9 +1,7 @@
 export type BalanceChartData = {
   id: string;
-  data: [
-    {
-      x: Date;
-      y: number;
-    },
-  ];
+  data: {
+    x: Date;
+    y: number;
+  }[];
 }[];

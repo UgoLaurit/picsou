@@ -13,6 +13,7 @@ export const useDateSelect = (
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { replace } = useRouter();
 
   useEffect(() => {

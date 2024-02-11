@@ -6,6 +6,7 @@ import { Skeleton } from "~/app/_components/ui/skeleton";
 const SkeletonTableBody = () => {
   return (
     <>
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
       {[...Array(3)].map((_, index) => (
         <TableRow key={index}>
           <TableCell>
