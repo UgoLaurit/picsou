@@ -39,7 +39,7 @@ const ImportTransactions = () => {
     const response = await addTransactions(
       newTransactions.map((transaction) => ({
         ...transaction,
-        bankAccountId: "clqpq9smf001hfogpvbqkispp",
+        bankAccountId: "clsj5jfay000108l37wjlamrv",
       })),
     );
 

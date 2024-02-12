@@ -18,8 +18,16 @@ export const useDateSelect = (
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
-    params.set("month", String(month));
-    params.set("year", String(year));
+    if (params.has("month")) {
+      params.set("month", String(month));
+    } else {
+      params.append("month", String(month));
+    }
+    if (params.has("year")) {
+      params.set("year", String(year));
+    } else {
+      params.append("year", String(year));
+    }
     replace(`${pathname}?${params.toString()}`);
   }, [month, year]);
 

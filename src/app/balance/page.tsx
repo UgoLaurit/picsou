@@ -13,7 +13,7 @@ const BalancePage = async ({
 
   const transactions = await getTransactionsByMonth({ month, year });
   const balance = await getBalance({
-    bankAccountId: "clqpq9smf001hfogpvbqkispp",
+    bankAccountId: "clsj5jfay000108l37wjlamrv",
     month,
     year,
   });
