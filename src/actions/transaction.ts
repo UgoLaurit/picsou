@@ -5,14 +5,17 @@ import { db } from "~/server/db";
 import { revalidatePath } from "next/cache";
 
 export const getTransactionsByMonth = async ({
+  bankAccountId,
   month,
   year,
 }: {
+  bankAccountId: string;
   month: number;
   year: number;
 }): Promise<Transaction[]> => {
   return db.transaction.findMany({
     where: {
+      bankAccountId: bankAccountId,
       date: {
         gte: new Date(year, month - 1, 1),
         lte: new Date(year, month, 0),

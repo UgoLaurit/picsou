@@ -7,19 +7,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { type BankAccount } from "~/types/bank-account";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const BankSelect = () => {
-  const [value, setValue] = useState("LCL");
+const BankSelect = ({ bankAccounts }: { bankAccounts: BankAccount[] }) => {
+  const [selectedBankAccount, setSelectedBankAccount] = useState(
+    bankAccounts[0].id,
+  );
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { replace } = useRouter();
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (params.has("bankAccount")) {
+      params.set("bankAccount", String(selectedBankAccount));
+    } else {
+      params.append("bankAccount", String(selectedBankAccount));
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, [selectedBankAccount]);
 
   return (
-    <Select value={value} onValueChange={setValue}>
+    <Select
+      value={selectedBankAccount}
+      onValueChange={(newValue) => setSelectedBankAccount(newValue)}
+    >
       <SelectTrigger className="w-[180px]">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="LCL">LCL</SelectItem>
-        <SelectItem value="N26">N26</SelectItem>
+        {bankAccounts.map((bankAccount) => (
+          <SelectItem key={bankAccount.id} value={bankAccount.id}>
+            {bankAccount.name}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
