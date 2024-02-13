@@ -21,6 +21,13 @@ const TransactionsPage = async ({
   const month = Number(searchParams?.month) || new Date().getMonth();
   const year = Number(searchParams?.year) || new Date().getFullYear();
 
+  if (!ownerId) {
+    throw new Error("No owner found");
+  }
+  if (!bankAccountId) {
+    throw new Error("No bank account found");
+  }
+
   const bankAccounts = await getBankAccounts({ ownerId });
 
   const transactions = await getTransactionsByMonth({

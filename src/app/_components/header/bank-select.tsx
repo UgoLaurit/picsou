@@ -12,6 +12,10 @@ import { type BankAccount } from "~/types/bank-account";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const BankSelect = ({ bankAccounts }: { bankAccounts: BankAccount[] }) => {
+  if (bankAccounts.length === 0 || bankAccounts[0] === undefined) {
+    throw new Error("No bank accounts found");
+  }
+
   const [selectedBankAccount, setSelectedBankAccount] = useState(
     bankAccounts[0].id,
   );
