@@ -21,21 +21,21 @@ import {
 } from '@/components/ui/table'
 import { Payment } from './columns'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+interface DataTableProps {
+  columns: ColumnDef<Payment, any>[]
+  data: Payment[]
   updateAmount?: (id: string, newAmount: number) => void
   onBucketSelect: (id: string | null) => void
   selectedBucketId: string | null
 }
 
-export function DataTable<TData extends Payment, TValue>({
+export function DataTable({
   columns,
   data,
   updateAmount,
   onBucketSelect,
   selectedBucketId,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps) {
   const [expanded, setExpanded] = useState<ExpandedState>({})
 
   const table = useReactTable({
