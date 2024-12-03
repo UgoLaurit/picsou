@@ -12,8 +12,7 @@
     "db:studio": "prisma studio",
     "db:setup": "NODE_ENV=development ts-node -P tsconfig.json scripts/db-setup.ts",
     "db:reset": "prisma migrate reset --force",
-    "vercel-build": "npm install --legacy-peer-deps && prisma generate && prisma db push && next build",
-    "postinstall": "npm install --legacy-peer-deps"
+    "vercel-build": "prisma generate && prisma db push && next build"
   },
   "dependencies": {
     "@prisma/client": "^6.0.1",
