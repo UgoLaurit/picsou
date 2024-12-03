@@ -1,18 +1,34 @@
 'use client'
 
-import { DataTable } from './data-table'
 import { columns } from './columns'
-import { SubcategoryGoal } from '@prisma/client'
+import { DataTable } from './data-table'
+import type { Payment } from './columns'
+import { Card } from '@/components/ui/card'
 
 interface BudgetTableProps {
-  goals: SubcategoryGoal[]
-  onEdit: (goal: SubcategoryGoal) => void
+  data: Payment[]
+  updateAmount: (id: string, newAmount: number) => void
+  onSubcategorySelect: (id: string | null) => void
+  selectedSubcategoryId: string | null
 }
 
-export const BudgetTable = ({ goals, onEdit }: BudgetTableProps) => {
+const BudgetTable = ({
+  data,
+  updateAmount,
+  onSubcategorySelect,
+  selectedSubcategoryId,
+}: BudgetTableProps) => {
   return (
-    <div className="rounded-md border">
-      <DataTable columns={columns} data={goals} onEdit={onEdit} />
-    </div>
+    <Card className="w-full">
+      <DataTable
+        columns={columns}
+        data={data}
+        updateAmount={updateAmount}
+        onSubcategorySelect={onSubcategorySelect}
+        selectedSubcategoryId={selectedSubcategoryId}
+      />
+    </Card>
   )
 }
+
+export default BudgetTable

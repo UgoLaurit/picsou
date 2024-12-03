@@ -1,149 +1,138 @@
 'use client'
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Payment } from './budget-table/columns'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { useState } from 'react'
+import { X, AlertCircle, Target } from 'lucide-react'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { SubcategoryGoal } from '@prisma/client'
-import { useForm } from 'react-hook-form'
 
 interface SubcategoryGoalConfigProps {
-  open: boolean
+  bucket: Payment
+  onUpdate: (id: string, amount: number, type: 'required' | 'wanted') => void
   onClose: () => void
-  goal?: SubcategoryGoal | null
-}
-
-interface FormData {
-  amount: number
-  type: 'required' | 'wanted'
-  isRecurring: boolean
-  recurrenceInterval?: string
 }
 
 export const SubcategoryGoalConfig = ({
-  open,
+  bucket,
+  onUpdate,
   onClose,
-  goal,
 }: SubcategoryGoalConfigProps) => {
-  const { register, handleSubmit, watch, setValue } = useForm<FormData>({
-    defaultValues: {
-      amount: goal?.amount || 0,
-      type: goal?.type || 'wanted',
-      isRecurring: goal?.isRecurring || false,
-      recurrenceInterval: goal?.recurrenceInterval,
-    },
-  })
+  const [amount, setAmount] = useState(bucket.goal?.amount || 0)
+  const [type, setType] = useState<'required' | 'wanted'>(
+    bucket.goal?.type || 'wanted'
+  )
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      if (goal) {
-        await fetch(`/api/subcategory-goals/${goal.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        })
-      } else {
-        await fetch('/api/subcategory-goals', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        })
-      }
-      onClose()
-    } catch (error) {
-      console.error('Failed to save goal:', error)
-    }
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount)
   }
 
+  const handleSave = () => {
+    onUpdate(bucket.id, amount, type)
+    onClose()
+  }
+
+  const progress = amount > 0 ? (bucket.amount / amount) * 100 : 0
+  const remaining = Math.max(0, amount - bucket.amount)
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {goal ? 'Edit Budget Goal' : 'New Budget Goal'}
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="amount">Amount</Label>
-            <Input
-              id="amount"
-              type="number"
-              step="0.01"
-              {...register('amount', { valueAsNumber: true })}
-            />
+    <Card className="w-[400px]">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-base font-medium">
+          Goal Configuration
+        </CardTitle>
+        <Button variant="ghost" className="h-auto p-0" onClick={onClose}>
+          <X className="h-4 w-4" />
+        </Button>
+      </CardHeader>
+
+      <CardContent className="grid gap-4">
+        <div>
+          <div className="mb-4 flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Current amount:</span>
+            <span className="font-medium">{formatCurrency(bucket.amount)}</span>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
-            <Select
-              value={watch('type')}
-              onValueChange={(value) =>
-                setValue('type', value as 'required' | 'wanted')
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="required">Required</SelectItem>
-                <SelectItem value="wanted">Wanted</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="isRecurring">Recurring</Label>
-            <Select
-              value={watch('isRecurring').toString()}
-              onValueChange={(value) =>
-                setValue('isRecurring', value === 'true')
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Yes</SelectItem>
-                <SelectItem value="false">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {watch('isRecurring') && (
-            <div className="space-y-2">
-              <Label htmlFor="recurrenceInterval">Interval</Label>
-              <Select
-                value={watch('recurrenceInterval')}
-                onValueChange={(value) => setValue('recurrenceInterval', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select interval" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
+
+          <div className="space-y-4">
+            <div className="grid gap-2">
+              <Label htmlFor="amount">Target amount</Label>
+              <Input
+                id="amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="h-8"
+              />
             </div>
+
+            <div className="grid gap-2">
+              <Label>Goal type</Label>
+              <RadioGroup
+                value={type}
+                onValueChange={(value) =>
+                  setType(value as 'required' | 'wanted')
+                }
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="required" id="required" />
+                  <Label
+                    htmlFor="required"
+                    className="flex items-center gap-1.5"
+                  >
+                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    Required
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="wanted" id="wanted" />
+                  <Label htmlFor="wanted" className="flex items-center gap-1.5">
+                    <Target className="h-4 w-4 text-yellow-500" />
+                    Target
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+        </div>
+
+        <Card
+          className={cn(
+            'shadow-none border-none',
+            type === 'required' ? 'bg-red-50' : 'bg-yellow-50'
           )}
-          <DialogFooter>
-            <Button type="submit">Save</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        >
+          <div className="p-3">
+            <div className="flex justify-between text-sm">
+              <span
+                className={cn(
+                  'font-medium',
+                  type === 'required' ? 'text-red-600' : 'text-yellow-600'
+                )}
+              >
+                {remaining > 0
+                  ? `${formatCurrency(remaining)} remaining`
+                  : 'Goal completed'}
+              </span>
+              <span className="text-muted-foreground">
+                {Math.round(progress)}% funded
+              </span>
+            </div>
+          </div>
+        </Card>
+
+        <div className="flex justify-end">
+          <Button size="sm" onClick={handleSave} className="px-8">
+            Save
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

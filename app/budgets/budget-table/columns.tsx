@@ -1,85 +1,165 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Pencil } from 'lucide-react'
+import { ChevronRight, ChevronDown, AlertCircle, Target } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { cn } from '@/lib/utils'
 import { AmountCell } from './amount-cell'
-import { SubcategoryGoal } from '@prisma/client'
 
-export const columns: ColumnDef<SubcategoryGoal>[] = [
+export type GoalType = 'required' | 'wanted'
+
+export type Payment = {
+  id: string
+  category: string
+  subcategory?: string
+  amount: number
+  goal?: {
+    amount: number
+    type: GoalType
+  }
+  subRows?: Payment[]
+}
+
+export const columns: ColumnDef<Payment>[] = [
   {
-    accessorKey: 'subcategory.category.name',
-    header: ({ column }) => {
-      return (
+    id: 'expander',
+    header: () => null,
+    size: 40,
+    cell: ({ row }) => {
+      return row.getCanExpand() ? (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0 h-auto w-6"
+          onClick={row.getToggleExpandedHandler()}
         >
-          Category
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {row.getIsExpanded() ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
         </Button>
+      ) : null
+    },
+  },
+  {
+    accessorKey: 'category',
+    header: 'Category',
+    cell: ({ row }) => {
+      return row.original.subcategory ? (
+        <span className="text-muted-foreground">
+          {row.original.subcategory}
+        </span>
+      ) : (
+        <span className="font-medium">{row.original.category}</span>
       )
     },
   },
   {
-    accessorKey: 'subcategory.name',
-    header: ({ column }) => {
+    id: 'progress',
+    header: () => null,
+    size: 300,
+    cell: ({ row }) => {
+      if (!row.original.goal) return null
+
+      const goalAmount = row.original.goal.amount
+      const currentAmount = row.original.amount
+      const progress = (currentAmount / goalAmount) * 100
+      const remaining = goalAmount - currentAmount
+      const isComplete = progress >= 100
+      const isRequired = row.original.goal.type === 'required'
+
+      const formattedRemaining = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+      }).format(remaining)
+
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Subcategory
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="w-32">
+            <Progress
+              value={progress}
+              className={cn(
+                isComplete && 'bg-emerald-100 [&>div]:bg-emerald-600',
+                !isComplete &&
+                  isRequired &&
+                  'bg-destructive/20 [&>div]:bg-destructive',
+                !isComplete &&
+                  !isRequired &&
+                  'bg-yellow-500/20 [&>div]:bg-yellow-500',
+                '[&>div]:transition-all'
+              )}
+            />
+          </div>
+          <div
+            className={cn(
+              'text-xs whitespace-nowrap',
+              isComplete && 'text-emerald-600',
+              !isComplete && isRequired && 'text-destructive',
+              !isComplete && !isRequired && 'text-yellow-500'
+            )}
+          >
+            {isComplete
+              ? 'Goal completed'
+              : `${formattedRemaining} remaining this month`}
+          </div>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'goal',
+    header: () => <div className="text-right">Goal</div>,
+    cell: ({ row }) => {
+      if (!row.original.goal) return null
+      const formatted = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+      }).format(row.original.goal.amount)
+
+      const isRequired = row.original.goal.type === 'required'
+      const Icon = isRequired ? AlertCircle : Target
+
+      return (
+        <div className="flex items-center justify-end gap-2">
+          <Icon
+            className={cn(
+              'h-4 w-4',
+              isRequired ? 'text-destructive' : 'text-yellow-500'
+            )}
+          />
+          <div
+            className={cn(
+              'text-right',
+              row.original.subcategory ? 'text-muted-foreground' : 'font-medium'
+            )}
+          >
+            {formatted}
+          </div>
+        </div>
       )
     },
   },
   {
     accessorKey: 'amount',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Goal
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
-      return <AmountCell value={amount} />
-    },
-  },
-  {
-    accessorKey: 'type',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Type
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-  {
-    id: 'actions',
+    header: () => <div className="text-right">Amount</div>,
     cell: ({ row, table }) => {
-      const goal = row.original
+      const amount = parseFloat(row.getValue('amount'))
       return (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => table.options.meta?.onEdit(goal)}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
+        <AmountCell
+          value={amount}
+          row={row}
+          onAmountChange={(id, newAmount) => {
+            const updateAmount = (table.options.meta as TableMetaType)
+              ?.updateAmount
+            updateAmount?.(id, newAmount)
+          }}
+        />
       )
     },
   },
 ]
+
+interface TableMetaType {
+  updateAmount?: (id: string, newAmount: number) => void
+}

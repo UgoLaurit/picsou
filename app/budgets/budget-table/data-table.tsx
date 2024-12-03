@@ -5,9 +5,13 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getSortedRowModel,
-  SortingState,
+  getExpandedRowModel,
+  ExpandedState,
+  TableMeta,
 } from '@tanstack/react-table'
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
+
 import {
   Table,
   TableBody,
@@ -16,34 +20,54 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useState } from 'react'
-import { SubcategoryGoal } from '@prisma/client'
+import { Payment } from './columns'
 
-interface DataTableProps {
-  columns: ColumnDef<SubcategoryGoal>[]
-  data: SubcategoryGoal[]
-  onEdit: (goal: SubcategoryGoal) => void
+interface TableMetaType extends TableMeta<Payment> {
+  updateAmount?: (id: string, newAmount: number) => void
 }
 
-export const DataTable = ({ columns, data, onEdit }: DataTableProps) => {
-  const [sorting, setSorting] = useState<SortingState>([])
+interface DataTableProps {
+  columns: ColumnDef<Payment>[]
+  data: Payment[]
+  updateAmount?: (id: string, newAmount: number) => void
+  onSubcategorySelect: (id: string | null) => void
+  selectedSubcategoryId: string | null
+}
 
-  const table = useReactTable({
+export function DataTable({
+  columns,
+  data,
+  updateAmount,
+  onSubcategorySelect,
+  selectedSubcategoryId,
+}: DataTableProps) {
+  const [expanded, setExpanded] = useState<ExpandedState>({})
+
+  const table = useReactTable<Payment>({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
     state: {
-      sorting,
+      expanded,
     },
     meta: {
-      onEdit,
-    },
+      updateAmount,
+    } as TableMetaType,
+    onExpandedChange: setExpanded,
+    getSubRows: (row) => row.subRows,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: (row) => Boolean(row.original.subRows?.length),
+    enableExpanding: true,
   })
 
+  const handleRowClick = (row: Payment) => {
+    if (row.subcategory) {
+      onSubcategorySelect(selectedSubcategoryId === row.id ? null : row.id)
+    }
+  }
+
   return (
-    <div className="rounded-md border">
+    <div className="w-full rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -65,22 +89,34 @@ export const DataTable = ({ columns, data, onEdit }: DataTableProps) => {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            <>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={cn(
+                    row.depth > 0 ? 'bg-muted/50' : undefined,
+                    row.original.subcategory &&
+                      'cursor-pointer hover:bg-muted/80',
+                    selectedSubcategoryId === row.original.id && 'bg-muted'
+                  )}
+                  onClick={() => handleRowClick(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </>
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No goals found.
+                No results.
               </TableCell>
             </TableRow>
           )}
