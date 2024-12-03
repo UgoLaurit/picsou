@@ -7,6 +7,7 @@ import {
   useReactTable,
   getExpandedRowModel,
   ExpandedState,
+  TableMeta,
 } from '@tanstack/react-table'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -21,8 +22,12 @@ import {
 } from '@/components/ui/table'
 import { Payment } from './columns'
 
+interface TableMetaType extends TableMeta<Payment> {
+  updateAmount?: (id: string, newAmount: number) => void
+}
+
 interface DataTableProps {
-  columns: ColumnDef<Payment, any>[]
+  columns: ColumnDef<Payment>[]
   data: Payment[]
   updateAmount?: (id: string, newAmount: number) => void
   onBucketSelect: (id: string | null) => void
@@ -38,7 +43,7 @@ export function DataTable({
 }: DataTableProps) {
   const [expanded, setExpanded] = useState<ExpandedState>({})
 
-  const table = useReactTable({
+  const table = useReactTable<Payment>({
     data,
     columns,
     state: {
@@ -46,9 +51,9 @@ export function DataTable({
     },
     meta: {
       updateAmount,
-    },
+    } as TableMetaType,
     onExpandedChange: setExpanded,
-    getSubRows: (row: Payment) => row.subRows,
+    getSubRows: (row) => row.subRows,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand: (row) => Boolean(row.original.subRows?.length),

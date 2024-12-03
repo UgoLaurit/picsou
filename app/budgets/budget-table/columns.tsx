@@ -148,8 +148,8 @@ export const columns: ColumnDef<Payment>[] = [
           value={amount}
           row={row}
           onAmountChange={(id, newAmount) => {
-            // @ts-expect-error - meta exists on the table instance
-            const updateAmount = table.options.meta?.updateAmount
+            const updateAmount = (table.options.meta as TableMetaType)
+              ?.updateAmount
             updateAmount?.(id, newAmount)
           }}
         />
@@ -157,3 +157,7 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
 ]
+
+interface TableMetaType {
+  updateAmount?: (id: string, newAmount: number) => void
+}
