@@ -1,4 +1,4 @@
-import PageTitle from '@/components/ui/page-title'
+import { PageTitle } from '@/components/ui/page-title'
 import { AccountsList } from './accounts-list'
 
 export default function AccountsPage() {

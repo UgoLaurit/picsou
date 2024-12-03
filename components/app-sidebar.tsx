@@ -25,7 +25,7 @@ const items = [
   },
   {
     title: 'Accounts',
-    url: 'accounts',
+    url: '/accounts',
     icon: Landmark,
   },
   {
@@ -35,12 +35,12 @@ const items = [
   },
   {
     title: 'Budgets',
-    url: 'budgets',
+    url: '/budgets',
     icon: Scale,
   },
   {
     title: 'Settings',
-    url: '#',
+    url: '/settings',
     icon: Settings,
   },
 ]

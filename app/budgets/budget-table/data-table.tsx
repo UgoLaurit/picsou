@@ -5,13 +5,9 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getExpandedRowModel,
-  ExpandedState,
-  TableMeta,
+  getSortedRowModel,
+  SortingState,
 } from '@tanstack/react-table'
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
-
 import {
   Table,
   TableBody,
@@ -20,54 +16,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Payment } from './columns'
-
-interface TableMetaType extends TableMeta<Payment> {
-  updateAmount?: (id: string, newAmount: number) => void
-}
+import { useState } from 'react'
+import { SubcategoryGoal } from '@prisma/client'
 
 interface DataTableProps {
-  columns: ColumnDef<Payment>[]
-  data: Payment[]
-  updateAmount?: (id: string, newAmount: number) => void
-  onBucketSelect: (id: string | null) => void
-  selectedBucketId: string | null
+  columns: ColumnDef<SubcategoryGoal>[]
+  data: SubcategoryGoal[]
+  onEdit: (goal: SubcategoryGoal) => void
 }
 
-export function DataTable({
-  columns,
-  data,
-  updateAmount,
-  onBucketSelect,
-  selectedBucketId,
-}: DataTableProps) {
-  const [expanded, setExpanded] = useState<ExpandedState>({})
+export const DataTable = ({ columns, data, onEdit }: DataTableProps) => {
+  const [sorting, setSorting] = useState<SortingState>([])
 
-  const table = useReactTable<Payment>({
+  const table = useReactTable({
     data,
     columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     state: {
-      expanded,
+      sorting,
     },
     meta: {
-      updateAmount,
-    } as TableMetaType,
-    onExpandedChange: setExpanded,
-    getSubRows: (row) => row.subRows,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getRowCanExpand: (row) => Boolean(row.original.subRows?.length),
-    enableExpanding: true,
+      onEdit,
+    },
   })
 
-  const handleRowClick = (row: Payment) => {
-    if (row.bucket) {
-      onBucketSelect(selectedBucketId === row.id ? null : row.id)
-    }
-  }
-
   return (
-    <div className="w-full rounded-md border">
+    <div className="rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -89,33 +65,22 @@ export function DataTable({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            <>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className={cn(
-                    row.depth > 0 ? 'bg-muted/50' : undefined,
-                    row.original.bucket && 'cursor-pointer hover:bg-muted/80',
-                    selectedBucketId === row.original.id && 'bg-muted'
-                  )}
-                  onClick={() => handleRowClick(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </>
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                No goals found.
               </TableCell>
             </TableRow>
           )}

@@ -1,163 +1,85 @@
 'use client'
 
-import { ColumnDef } from '@tanstack/react-table'
-import { ChevronRight, ChevronDown, AlertCircle, Target } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { cn } from '@/lib/utils'
+import { ColumnDef } from '@tanstack/react-table'
+import { ArrowUpDown, Pencil } from 'lucide-react'
 import { AmountCell } from './amount-cell'
+import { SubcategoryGoal } from '@prisma/client'
 
-export type GoalType = 'required' | 'wanted'
-
-export type Payment = {
-  id: string
-  category: string
-  bucket?: string
-  amount: number
-  goal?: {
-    amount: number
-    type: GoalType
-  }
-  subRows?: Payment[]
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<SubcategoryGoal>[] = [
   {
-    id: 'expander',
-    header: () => null,
-    size: 40,
-    cell: ({ row }) => {
-      return row.getCanExpand() ? (
+    accessorKey: 'subcategory.category.name',
+    header: ({ column }) => {
+      return (
         <Button
           variant="ghost"
-          className="p-0 h-auto w-6"
-          onClick={row.getToggleExpandedHandler()}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {row.getIsExpanded() ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4" />
-          )}
+          Category
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      ) : null
-    },
-  },
-  {
-    accessorKey: 'category',
-    header: 'Category',
-    cell: ({ row }) => {
-      return row.original.bucket ? (
-        <span className="text-muted-foreground">{row.original.bucket}</span>
-      ) : (
-        <span className="font-medium">{row.original.category}</span>
       )
     },
   },
   {
-    id: 'progress',
-    header: 'Progress',
-    size: 300,
-    cell: ({ row }) => {
-      if (!row.original.goal) return null
-
-      const goalAmount = row.original.goal.amount
-      const currentAmount = row.original.amount
-      const progress = (currentAmount / goalAmount) * 100
-      const remaining = goalAmount - currentAmount
-      const isComplete = progress >= 100
-      const isRequired = row.original.goal.type === 'required'
-
-      const formattedRemaining = new Intl.NumberFormat('fr-FR', {
-        style: 'currency',
-        currency: 'EUR',
-      }).format(remaining)
-
+    accessorKey: 'subcategory.name',
+    header: ({ column }) => {
       return (
-        <div className="flex items-center gap-2">
-          <div className="w-32">
-            <Progress
-              value={progress}
-              className={cn(
-                isComplete && 'bg-emerald-100 [&>div]:bg-emerald-600',
-                !isComplete &&
-                  isRequired &&
-                  'bg-destructive/20 [&>div]:bg-destructive',
-                !isComplete &&
-                  !isRequired &&
-                  'bg-yellow-500/20 [&>div]:bg-yellow-500',
-                '[&>div]:transition-all'
-              )}
-            />
-          </div>
-          <div
-            className={cn(
-              'text-xs whitespace-nowrap',
-              isComplete && 'text-emerald-600',
-              !isComplete && isRequired && 'text-destructive',
-              !isComplete && !isRequired && 'text-yellow-500'
-            )}
-          >
-            {isComplete
-              ? 'Goal completed'
-              : `${formattedRemaining} remaining this month`}
-          </div>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'goal',
-    header: () => <div className="text-right">Goal</div>,
-    cell: ({ row }) => {
-      if (!row.original.goal) return null
-      const formatted = new Intl.NumberFormat('fr-FR', {
-        style: 'currency',
-        currency: 'EUR',
-      }).format(row.original.goal.amount)
-
-      const isRequired = row.original.goal.type === 'required'
-      const Icon = isRequired ? AlertCircle : Target
-
-      return (
-        <div className="flex items-center justify-end gap-2">
-          <Icon
-            className={cn(
-              'h-4 w-4',
-              isRequired ? 'text-destructive' : 'text-yellow-500'
-            )}
-          />
-          <div
-            className={cn(
-              'text-right',
-              row.original.bucket ? 'text-muted-foreground' : 'font-medium'
-            )}
-          >
-            {formatted}
-          </div>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Subcategory
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       )
     },
   },
   {
     accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row, table }) => {
-      const amount = parseFloat(row.getValue('amount'))
+    header: ({ column }) => {
       return (
-        <AmountCell
-          value={amount}
-          row={row}
-          onAmountChange={(id, newAmount) => {
-            const updateAmount = (table.options.meta as TableMetaType)
-              ?.updateAmount
-            updateAmount?.(id, newAmount)
-          }}
-        />
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Goal
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue('amount'))
+      return <AmountCell value={amount} />
+    },
+  },
+  {
+    accessorKey: 'type',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Type
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    id: 'actions',
+    cell: ({ row, table }) => {
+      const goal = row.original
+      return (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => table.options.meta?.onEdit(goal)}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
       )
     },
   },
 ]
-
-interface TableMetaType {
-  updateAmount?: (id: string, newAmount: number) => void
-}

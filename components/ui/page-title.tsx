@@ -3,11 +3,7 @@ interface PageTitleProps {
 }
 
 const PageTitle = ({ title }: PageTitleProps) => {
-  return (
-    <div className="mb-8">
-      <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-    </div>
-  )
+  return <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
 }
 
-export default PageTitle
+export { PageTitle }
