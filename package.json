@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "db:setup": "NODE_ENV=development ts-node -P tsconfig.json scripts/db-setup.ts",
     "db:reset": "prisma migrate reset --force",
-    "vercel-build": "prisma generate && prisma db push && next build"
+    "vercel-build": "npm install --legacy-peer-deps && prisma generate && prisma db push && next build",
+    "postinstall": "npm install --legacy-peer-deps"
   },
   "dependencies": {
     "@prisma/client": "^6.0.1",
@@ -23,7 +24,7 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@tanstack/react-table": "^8.20.5",
+    "@tanstack/react-table": "^8.11.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.463.0",
@@ -38,6 +39,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
