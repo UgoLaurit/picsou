@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Payment } from './budget-table/columns'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'

@@ -148,8 +148,9 @@ export const columns: ColumnDef<Payment>[] = [
           value={amount}
           row={row}
           onAmountChange={(id, newAmount) => {
-            // @ts-ignore - table.options.meta is added by the parent
-            table.options.meta?.updateAmount?.(id, newAmount)
+            // @ts-expect-error - meta exists on the table instance
+            const updateAmount = table.options.meta?.updateAmount
+            updateAmount?.(id, newAmount)
           }}
         />
       )
